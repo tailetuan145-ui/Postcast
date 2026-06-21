@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podcast Học Tập 12 Units</title>
+<style>
+  body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; padding: 20px; color: #333; }
+  .app-container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+  h1 { text-align: center; color: #6200ea; margin-bottom: 30px; }
+  
+  .unit-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+  .unit-btn { background: #6200ea; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+  .unit-btn:hover { background: #3700b3; }
+
+  .audio-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+  .audio-item { background: #f9f9f9; padding: 15px; border-radius: 12px; border: 1px solid #eee; }
+  audio { width: 100%; margin-top: 10px; }
+  
+  .back-btn { background: #e0e0e0; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
+  .view-screen { display: none; }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <div id="menu-screen">
+    <h1>🎧 Podcast Bài Giảng</h1>
+    <div class="unit-menu" id="unit-menu"></div>
+  </div>
+
+  <div id="audio-screen" class="view-screen">
+    <button class="back-btn" onclick="goBack()">⬅ Quay lại</button>
+    <h2 id="current-unit-title">Unit ...</h2>
+    <div id="audio-player-area" class="audio-list"></div>
+  </div>
+</div>
+
+<script>
+  // CẤU HÌNH LINK FILE ÂM THANH (.mp3)
+  // Bạn có thể upload file mp3 lên GitHub (như cách up ảnh) và điền link vào đây
+  const audioData = {
+    1: [],
+    2: [
+      { title: "Từ vựng Unit 2 - Phần 1", src: "audio/u2-p1.mp3" },
+      { title: "Ngữ pháp Unit 2 - Phần 2", src: "audio/u2-p2.mp3" }
+    ],
+    // ... thêm cho các unit khác
+  };
+
+  function initMenu() {
+    for (let i = 1; i <= 12; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'unit-btn';
+      btn.innerText = `Unit ${i}`;
+      btn.onclick = () => openUnit(i);
+      document.getElementById('unit-menu').appendChild(btn);
+    }
+  }
+
+  function openUnit(unitNumber) {
+    document.getElementById('current-unit-title').innerText = `Podcast Unit ${unitNumber}`;
+    const area = document.getElementById('audio-player-area');
+    area.innerHTML = '';
+    const tracks = audioData[unitNumber] || [];
+
+    if (tracks.length === 0) area.innerHTML = "<p>Đang cập nhật nội dung...</p>";
+    else {
+      tracks.forEach(track => {
+        area.innerHTML += `
+          <div class="audio-item">
+            <p><strong>${track.title}</strong></p>
+            <audio controls><source src="${track.src}" type="audio/mpeg"></audio>
+          </div>
+        `;
+      });
+    }
+    document.getElementById('menu-screen').style.display = 'none';
+    document.getElementById('audio-screen').style.display = 'block';
+  }
+
+  function goBack() {
+    document.getElementById('audio-screen').style.display = 'none';
+    document.getElementById('menu-screen').style.display = 'block';
+  }
+
+  initMenu();
+</script>
+</body>
+</html>
