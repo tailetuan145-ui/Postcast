@@ -3,62 +3,376 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Podcast Unit 2</title>
+<title>Thư viện Podcast Học Tập</title>
 <style>
-  body { background-color: #f4f7f6; font-family: 'Segoe UI', sans-serif; padding: 20px; color: #333; }
-  .app-container { max-width: 800px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
-  h1 { text-align: center; color: #6200ea; margin-bottom: 30px; }
-  
-  .unit-menu { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
-  .unit-btn { background: #6200ea; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-  .unit-btn:hover { background: #3700b3; }
+  /* --- CÀI ĐẶT MÀU SẮC (SÁNG / TỐI) --- */
+  :root {
+    --bg-color: #f0f2f5;
+    --app-bg: #ffffff;
+    --text-main: #1c1e21;
+    --text-sub: #606770;
+    --accent-color: #7209b7; 
+    --accent-hover: #560bad;
+    --card-bg: #f8f9fa;
+    --card-border: #eeeeee;
+    --shadow: rgba(0, 0, 0, 0.08);
+  }
 
-  .audio-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
-  .audio-item { display: flex; align-items: center; gap: 20px; background: #f9f9f9; padding: 15px; border-radius: 15px; border: 1px solid #eee; transition: 0.3s; }
-  .audio-item:hover { border-color: #6200ea; }
+  body.dark-mode {
+    --bg-color: #121212;
+    --app-bg: #1e1e1e;
+    --text-main: #f5f6f7;
+    --text-sub: #b0b3b8;
+    --accent-color: #9d4edd;
+    --accent-hover: #c77dff;
+    --card-bg: #2a2a2a;
+    --card-border: #333333;
+    --shadow: rgba(0, 0, 0, 0.3);
+  }
+
+  body {
+    background-color: var(--bg-color);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 20px;
+    color: var(--text-main);
+    transition: all 0.3s ease;
+  }
+
+  .app-container {
+    max-width: 850px;
+    margin: 0 auto;
+    background: var(--app-bg);
+    border-radius: 24px;
+    box-shadow: 0 10px 40px var(--shadow);
+    padding: 35px;
+    min-height: 500px;
+    position: relative;
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--accent-color);
+    font-size: 34px;
+    margin-top: 0;
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+  }
+
+  .theme-toggle {
+    position: absolute;
+    top: 25px;
+    right: 30px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-main);
+  }
+  .theme-toggle:hover { transform: scale(1.1); }
+
+  .unit-menu {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 15px;
+  }
+
+  .unit-btn {
+    background: linear-gradient(135deg, var(--accent-color), var(--accent-hover));
+    color: white;
+    border: none;
+    padding: 20px 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(114, 9, 183, 0.3);
+  }
+
+  .unit-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(114, 9, 183, 0.5);
+  }
+
+  .view-screen {
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .toolbar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--card-border);
+    padding-bottom: 15px;
+  }
+
+  .back-btn {
+    background-color: var(--card-bg);
+    color: var(--text-main);
+    border: 1px solid var(--card-border);
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+    margin-right: 20px;
+  }
+
+  .back-btn:hover { background-color: var(--card-border); }
+
+  .unit-title {
+    font-size: 26px;
+    color: var(--accent-color);
+    margin: 0;
+  }
+
+  .audio-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .audio-item {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 20px;
+    border: 1px solid var(--card-border);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+
+  .audio-item:hover {
+    border-color: var(--accent-color);
+    transform: translateX(5px);
+  }
+
+  /* Ảnh bìa có thêm hiệu ứng bấm */
+  .podcast-cover {
+    width: 90px;
+    height: 90px;
+    border-radius: 15px;
+    object-fit: cover;
+    box-shadow: 0 4px 12px var(--shadow);
+    background-color: #ddd; 
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
   
-  .podcast-cover { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-  .audio-info { flex-grow: 1; }
-  audio { width: 100%; margin-top: 10px; height: 35px; }
-  
-  .back-btn { background: #e0e0e0; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 20px; }
-  .view-screen { display: none; }
+  .podcast-cover:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px var(--shadow);
+  }
+
+  .audio-info {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .audio-info h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+    color: var(--text-main);
+  }
+
+  .audio-info p {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: var(--text-sub);
+  }
+
+  audio {
+    width: 100%;
+    height: 40px;
+    outline: none;
+    border-radius: 20px;
+  }
+
+  audio::-webkit-media-controls-panel {
+    background-color: var(--app-bg);
+  }
+  audio::-webkit-media-controls-current-time-display,
+  audio::-webkit-media-controls-time-remaining-display {
+    color: var(--text-main);
+  }
+
+  .empty-state {
+    text-align: center;
+    color: var(--text-sub);
+    font-size: 18px;
+    padding: 40px 0;
+  }
+
+  /* --- KHU VỰC LIGHTBOX (PHÓNG TO ẢNH) --- */
+  .lightbox {
+    display: none;
+    position: fixed;
+    z-index: 999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+  }
+
+  .lightbox img {
+    max-width: 85%;
+    max-height: 85%;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+
+  .close-lightbox {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .close-lightbox:hover {
+    color: #ff5252;
+    transform: scale(1.1);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .audio-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .podcast-cover {
+      width: 100%;
+      height: 180px;
+    }
+    .audio-info {
+      width: 100%;
+    }
+  }
 </style>
 </head>
 <body>
 
 <div class="app-container">
+  <button class="theme-toggle" id="theme-btn" onclick="toggleDarkMode()" title="Chuyển đổi Sáng/Tối">🌙</button>
+
   <div id="menu-screen">
     <h1>🎧 Thư viện Podcast</h1>
     <div class="unit-menu" id="unit-menu"></div>
   </div>
 
   <div id="audio-screen" class="view-screen">
-    <button class="back-btn" onclick="goBack()">⬅ Quay lại</button>
-    <h2 id="current-unit-title">Unit ...</h2>
+    <div class="toolbar">
+      <button class="back-btn" onclick="goBack()">⬅ Quay lại</button>
+      <h2 class="unit-title" id="current-unit-title">Unit ...</h2>
+    </div>
     <div id="audio-player-area" class="audio-list"></div>
   </div>
 </div>
 
-<script>
-  // HÀM TỰ ĐỘNG TẠO DANH SÁCH 8 TẬP PODCAST
-  function taoDanhSachPodcast(soLuong) {
-    let danhSach = [];
-    for (let i = 1; i <= soLuong; i++) {
-      danhSach.push({
-        title: `Tập ${i}: Bài giảng số ${i}`,
-        src: `audio/unit2/${i}.mp3`, // File âm thanh
-        cover: `images/unit2/${i}.jpg` // File ảnh bìa
-      });
-    }
-    return danhSach;
-  }
+<div id="lightbox" class="lightbox" onclick="closeLightboxOnBackground(event)">
+  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
+  <img id="lightbox-img" src="" alt="Zoomed Cover">
+</div>
 
+<script>
+  // ==========================================
+  // KHU VỰC CẤU HÌNH DẪN NGUỒN TRỰC TIẾP UNIT 2
+  // ==========================================
+  const unit2Podcasts = [
+    {
+      title: "1. How INTERPOL tracks stolen cars across borders",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 1",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "2. Mã Alpha-Zulu và nhận diện xe",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 2",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "3. Tactical English for International Law Enforcement",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 3",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "4. Thế giới ngầm trộm xe và INTERPOL",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 4",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "5. How English grammar catches car thieves",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 5",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "6. Tại sao Toyota bị trộm nhiều nhất",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 6",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "7. How language stops high speed chases",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 7",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    },
+    {
+      title: "8. Vũ khí tiếng Anh của cảnh sát",
+      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 8",
+      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
+      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+    }
+  ];
+
+  // ==========================================
+  // DỮ LIỆU 12 UNIT 
+  // ==========================================
   const audioData = {
     1: [],
-    2: taoDanhSachPodcast(8), // Tự động tạo 8 tập cho Unit 2
-    3: [], // Bạn có thể thêm các unit khác tương tự
+    2: unit2Podcasts,
+    3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []
   };
+
+  const menuScreen = document.getElementById('menu-screen');
+  const audioScreen = document.getElementById('audio-screen');
+  const unitMenuContainer = document.getElementById('unit-menu');
+  const audioPlayerArea = document.getElementById('audio-player-area');
+  const currentUnitTitle = document.getElementById('current-unit-title');
+  
+  // Khai báo các biến Lightbox
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
 
   function initMenu() {
     for (let i = 1; i <= 12; i++) {
@@ -66,42 +380,111 @@
       btn.className = 'unit-btn';
       btn.innerText = `Unit ${i}`;
       btn.onclick = () => openUnit(i);
-      document.getElementById('unit-menu').appendChild(btn);
+      
+      if (!audioData[i] || audioData[i].length === 0) {
+        btn.style.background = 'linear-gradient(135deg, #a0aab2, #788794)';
+        btn.style.boxShadow = 'none';
+      }
+      unitMenuContainer.appendChild(btn);
     }
   }
 
   function openUnit(unitNumber) {
-    document.getElementById('current-unit-title').innerText = `Podcast Unit ${unitNumber}`;
-    const area = document.getElementById('audio-player-area');
-    area.innerHTML = '';
+    currentUnitTitle.innerText = `Podcast Unit ${unitNumber}`;
+    audioPlayerArea.innerHTML = '';
     const tracks = audioData[unitNumber] || [];
 
-    if (tracks.length === 0) area.innerHTML = "<p>Đang cập nhật nội dung...</p>";
-    else {
+    if (tracks.length === 0) {
+      audioPlayerArea.innerHTML = `<div class="empty-state">Hồ sơ Unit ${unitNumber} đang được giải mật. Bạn quay lại sau nhé! 🕵️‍♂️</div>`;
+    } else {
       tracks.forEach(track => {
-        area.innerHTML += `
+        // Thêm thuộc tính onclick để mở Lightbox khi bấm vào ảnh
+        audioPlayerArea.innerHTML += `
           <div class="audio-item">
-            <img src="${track.cover}" class="podcast-cover" alt="Bìa tập ${track.title}">
+            <img src="${track.cover}" class="podcast-cover" title="Bấm để phóng to ảnh" onclick="openLightbox(this.src)" onerror="this.src='https://via.placeholder.com/300/7209b7/FFFFFF?text=INTERPOL'">
             <div class="audio-info">
-              <p><strong>${track.title}</strong></p>
-              <audio controls>
+              <h3>${track.title}</h3>
+              <p>${track.desc}</p>
+              <audio controls preload="metadata">
                 <source src="${track.src}" type="audio/mpeg">
+                Trình duyệt của bạn không hỗ trợ thẻ audio.
               </audio>
             </div>
           </div>
         `;
       });
+
+      // Tự động dừng bài cũ khi phát bài mới
+      const audios = document.querySelectorAll('audio');
+      audios.forEach(audio => {
+        audio.addEventListener('play', () => {
+          audios.forEach(otherAudio => {
+            if (otherAudio !== audio) {
+              otherAudio.pause();
+            }
+          });
+        });
+      });
     }
-    document.getElementById('menu-screen').style.display = 'none';
-    document.getElementById('audio-screen').style.display = 'block';
+
+    menuScreen.style.display = 'none';
+    audioScreen.style.display = 'block';
+    window.scrollTo({top: 0, behavior: 'smooth'});
   }
 
   function goBack() {
-    document.getElementById('audio-screen').style.display = 'none';
-    document.getElementById('menu-screen').style.display = 'block';
+    const audios = document.querySelectorAll('audio');
+    audios.forEach(audio => { audio.pause(); audio.currentTime = 0; });
+    
+    audioScreen.style.display = 'none';
+    menuScreen.style.display = 'block';
+  }
+
+  // --- CÁC HÀM XỬ LÝ LIGHTBOX ---
+  function openLightbox(src) {
+    // Nếu là ảnh lỗi (đang dùng ảnh placeholder), lấy link placeholder chất lượng cao hơn
+    if(src.includes("via.placeholder.com")) {
+      lightboxImg.src = 'https://via.placeholder.com/800/7209b7/FFFFFF?text=INTERPOL';
+    } else {
+      lightboxImg.src = src;
+    }
+    lightbox.style.display = "flex";
+  }
+
+  function closeLightbox() {
+    lightbox.style.display = "none";
+    lightboxImg.src = "";
+  }
+
+  // Đóng ảnh khi bấm ra vùng đen bên ngoài
+  function closeLightboxOnBackground(event) {
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+  }
+
+  // Bấm phím ESC để đóng ảnh
+  window.addEventListener('keydown', function(event) {
+    if (event.key === "Escape" && lightbox.style.display === "flex") {
+      closeLightbox();
+    }
+  });
+
+  // --- CÁC HÀM XỬ LÝ GIAO DIỆN ---
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const themeBtn = document.getElementById('theme-btn');
+    if (document.body.classList.contains('dark-mode')) {
+      themeBtn.innerText = '☀️';
+      themeBtn.title = 'Chuyển sang nền Sáng';
+    } else {
+      themeBtn.innerText = '🌙';
+      themeBtn.title = 'Chuyển sang nền Tối';
+    }
   }
 
   initMenu();
 </script>
+
 </body>
 </html>
