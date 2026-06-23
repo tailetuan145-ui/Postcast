@@ -159,7 +159,6 @@
     transform: translateX(5px);
   }
 
-  /* Ảnh bìa có thêm hiệu ứng bấm */
   .podcast-cover {
     width: 90px;
     height: 90px;
@@ -308,50 +307,50 @@
     {
       title: "1. How INTERPOL tracks stolen cars across borders",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 1",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/1. How INTERPOL tracks stolen cars across borders.m4a", 
+      cover: "Unit2-Alpha/Picture 1.png"
     },
     {
       title: "2. Mã Alpha-Zulu và nhận diện xe",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 2",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/2. Mã Alpha-Zulu và nhận diện xe.m4a", 
+      cover: "Unit2-Alpha/Picture 2.png"
     },
     {
       title: "3. Tactical English for International Law Enforcement",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 3",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/3. Tactical English for International Law Enforcement.m4a", 
+      cover: "Unit2-Alpha/Picture 3.png"
     },
     {
       title: "4. Thế giới ngầm trộm xe và INTERPOL",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 4",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/4. Thế giới ngầm trộm xe và INTERPOL.m4a", 
+      cover: "Unit2-Alpha/Picture 4.png"
     },
     {
       title: "5. How English grammar catches car thieves",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 5",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/5. How English grammar catches car thieves.m4a", 
+      cover: "Unit2-Alpha/Picture 5.png"
     },
     {
       title: "6. Tại sao Toyota bị trộm nhiều nhất",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 6",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/6. Tại sao Toyota bị trộm nhiều nhất.m4a", 
+      cover: "Unit2-Alpha/Picture 6.png"
     },
     {
       title: "7. How language stops high speed chases",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 7",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/7. How language stops high speed chases.m4a", 
+      cover: "Unit2-Alpha/Picture 7.png"
     },
     {
       title: "8. Vũ khí tiếng Anh của cảnh sát",
       desc: "🎧 Cùng khám phá hồ sơ điều tra phần 8",
-      src: "DÁN_LINK_MP3_CỦA_BẠN_VÀO_ĐÂY", 
-      cover: "DÁN_LINK_ẢNH_CỦA_BẠN_VÀO_ĐÂY"
+      src: "Unit2-Alpha/8. Vũ khí tiếng Anh của cảnh sát.m4a", 
+      cover: "Unit2-Alpha/Picture 8.png"
     }
   ];
 
@@ -442,7 +441,6 @@
 
   // --- CÁC HÀM XỬ LÝ LIGHTBOX ---
   function openLightbox(src) {
-    // Nếu là ảnh lỗi (đang dùng ảnh placeholder), lấy link placeholder chất lượng cao hơn
     if(src.includes("via.placeholder.com")) {
       lightboxImg.src = 'https://via.placeholder.com/800/7209b7/FFFFFF?text=INTERPOL';
     } else {
@@ -456,14 +454,12 @@
     lightboxImg.src = "";
   }
 
-  // Đóng ảnh khi bấm ra vùng đen bên ngoài
   function closeLightboxOnBackground(event) {
     if (event.target === lightbox) {
       closeLightbox();
     }
   }
 
-  // Bấm phím ESC để đóng ảnh
   window.addEventListener('keydown', function(event) {
     if (event.key === "Escape" && lightbox.style.display === "flex") {
       closeLightbox();
