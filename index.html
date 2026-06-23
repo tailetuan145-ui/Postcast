@@ -136,10 +136,11 @@
     margin: 0;
   }
 
+  /* --- DANH SÁCH PODCAST --- */
   .audio-list {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
   }
 
   .audio-item {
@@ -147,32 +148,27 @@
     align-items: center;
     gap: 20px;
     background: var(--card-bg);
-    padding: 15px;
-    border-radius: 20px;
+    padding: 15px 20px;
+    border-radius: 16px;
     border: 1px solid var(--card-border);
     transition: all 0.3s ease;
-    box-shadow: 0 2px 10px var(--shadow);
+    cursor: pointer; /* Biến thẻ thành nút bấm */
   }
 
   .audio-item:hover {
     border-color: var(--accent-color);
+    background: var(--app-bg);
     transform: translateX(5px);
+    box-shadow: 0 4px 15px var(--shadow);
   }
 
-  .podcast-cover {
-    width: 90px;
-    height: 90px;
-    border-radius: 15px;
+  .podcast-cover-mini {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
     object-fit: cover;
-    box-shadow: 0 4px 12px var(--shadow);
+    box-shadow: 0 2px 8px var(--shadow);
     background-color: #ddd; 
-    cursor: pointer;
-    transition: transform 0.2s;
-  }
-  
-  .podcast-cover:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 15px var(--shadow);
   }
 
   .audio-info {
@@ -184,29 +180,26 @@
 
   .audio-info h3 {
     margin: 0 0 5px 0;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--text-main);
   }
 
   .audio-info p {
-    margin: 0 0 10px 0;
-    font-size: 14px;
+    margin: 0;
+    font-size: 13px;
     color: var(--text-sub);
   }
 
-  audio {
-    width: 100%;
-    height: 40px;
-    outline: none;
-    border-radius: 20px;
+  .play-icon {
+    font-size: 24px;
+    color: var(--accent-color);
+    opacity: 0.7;
+    transition: 0.2s;
   }
-
-  audio::-webkit-media-controls-panel {
-    background-color: var(--app-bg);
-  }
-  audio::-webkit-media-controls-current-time-display,
-  audio::-webkit-media-controls-time-remaining-display {
-    color: var(--text-main);
+  
+  .audio-item:hover .play-icon {
+    opacity: 1;
+    transform: scale(1.2);
   }
 
   .empty-state {
@@ -216,62 +209,95 @@
     padding: 40px 0;
   }
 
-  /* --- KHU VỰC LIGHTBOX (PHÓNG TO ẢNH) --- */
-  .lightbox {
+  /* --- KHU VỰC NOW PLAYING (GIỐNG SPOTIFY) --- */
+  .now-playing-overlay {
     display: none;
     position: fixed;
-    z-index: 999;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
+    z-index: 1000;
+    left: 0; top: 0; width: 100%; height: 100%;
     background-color: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(15px);
     justify-content: center;
     align-items: center;
-    animation: fadeIn 0.3s;
+    animation: slideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
 
-  .lightbox img {
-    max-width: 85%;
-    max-height: 85%;
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  .np-container {
+    background: var(--app-bg);
+    width: 90%;
+    max-width: 400px;
+    border-radius: 30px;
+    padding: 40px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    position: relative;
+    border: 1px solid var(--card-border);
   }
 
-  .close-lightbox {
+  .np-close {
     position: absolute;
-    top: 20px;
-    right: 30px;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
+    top: 20px; right: 25px;
+    background: transparent;
+    border: none;
+    font-size: 30px;
+    color: var(--text-sub);
     cursor: pointer;
     transition: 0.2s;
   }
 
-  .close-lightbox:hover {
-    color: #ff5252;
-    transform: scale(1.1);
+  .np-close:hover { color: #ff5252; transform: scale(1.1); }
+
+  .np-cover {
+    width: 250px;
+    height: 250px;
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    margin-bottom: 30px;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+  .np-title {
+    font-size: 22px;
+    color: var(--text-main);
+    text-align: center;
+    margin: 0 0 10px 0;
+    font-weight: bold;
+  }
+
+  .np-desc {
+    font-size: 15px;
+    color: var(--accent-color);
+    text-align: center;
+    margin: 0 0 30px 0;
+    font-weight: 500;
+  }
+
+  .np-audio {
+    width: 100%;
+    height: 50px;
+    outline: none;
+  }
+
+  /* Tùy chỉnh thanh phát nhạc */
+  .np-audio::-webkit-media-controls-panel { background-color: var(--card-bg); }
+  .np-audio::-webkit-media-controls-current-time-display,
+  .np-audio::-webkit-media-controls-time-remaining-display { color: var(--text-main); }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(50px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
   @media (max-width: 600px) {
-    .audio-item {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-    .podcast-cover {
-      width: 100%;
-      height: 180px;
-    }
-    .audio-info {
-      width: 100%;
-    }
+    .np-container { padding: 30px 20px; }
+    .np-cover { width: 220px; height: 220px; }
   }
 </style>
 </head>
@@ -294,9 +320,17 @@
   </div>
 </div>
 
-<div id="lightbox" class="lightbox" onclick="closeLightboxOnBackground(event)">
-  <span class="close-lightbox" onclick="closeLightbox()">&times;</span>
-  <img id="lightbox-img" src="" alt="Zoomed Cover">
+<div id="now-playing-overlay" class="now-playing-overlay" onclick="closeOnBackground(event)">
+  <div class="np-container">
+    <button class="np-close" onclick="closeNowPlaying()" title="Đóng">&times;</button>
+    <img id="np-cover-img" src="" class="np-cover" onerror="this.src='https://via.placeholder.com/500/7209b7/FFFFFF?text=INTERPOL'">
+    <h2 id="np-title" class="np-title">Đang tải...</h2>
+    <p id="np-desc" class="np-desc">Vui lòng chờ</p>
+    
+    <audio id="np-audio-player" class="np-audio" controls controlsList="nodownload">
+      Trình duyệt của bạn không hỗ trợ audio.
+    </audio>
+  </div>
 </div>
 
 <script>
@@ -306,49 +340,49 @@
   const unit2Podcasts = [
     {
       title: "1. How INTERPOL tracks stolen cars across borders",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 1",
+      desc: "Hồ sơ điều tra phần 1",
       src: "Unit2-Alpha/1. How INTERPOL tracks stolen cars across borders.m4a", 
       cover: "Unit2-Alpha/Picture 1.png"
     },
     {
       title: "2. Mã Alpha-Zulu và nhận diện xe",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 2",
+      desc: "Hồ sơ điều tra phần 2",
       src: "Unit2-Alpha/2. Mã Alpha-Zulu và nhận diện xe.m4a", 
       cover: "Unit2-Alpha/Picture 2.png"
     },
     {
       title: "3. Tactical English for International Law Enforcement",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 3",
+      desc: "Hồ sơ điều tra phần 3",
       src: "Unit2-Alpha/3. Tactical English for International Law Enforcement.m4a", 
       cover: "Unit2-Alpha/Picture 3.png"
     },
     {
       title: "4. Thế giới ngầm trộm xe và INTERPOL",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 4",
+      desc: "Hồ sơ điều tra phần 4",
       src: "Unit2-Alpha/4. Thế giới ngầm trộm xe và INTERPOL.m4a", 
       cover: "Unit2-Alpha/Picture 4.png"
     },
     {
       title: "5. How English grammar catches car thieves",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 5",
+      desc: "Hồ sơ điều tra phần 5",
       src: "Unit2-Alpha/5. How English grammar catches car thieves.m4a", 
       cover: "Unit2-Alpha/Picture 5.png"
     },
     {
       title: "6. Tại sao Toyota bị trộm nhiều nhất",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 6",
+      desc: "Hồ sơ điều tra phần 6",
       src: "Unit2-Alpha/6. Tại sao Toyota bị trộm nhiều nhất.m4a", 
       cover: "Unit2-Alpha/Picture 6.png"
     },
     {
       title: "7. How language stops high speed chases",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 7",
+      desc: "Hồ sơ điều tra phần 7",
       src: "Unit2-Alpha/7. How language stops high speed chases.m4a", 
       cover: "Unit2-Alpha/Picture 7.png"
     },
     {
       title: "8. Vũ khí tiếng Anh của cảnh sát",
-      desc: "🎧 Cùng khám phá hồ sơ điều tra phần 8",
+      desc: "Hồ sơ điều tra phần 8",
       src: "Unit2-Alpha/8. Vũ khí tiếng Anh của cảnh sát.m4a", 
       cover: "Unit2-Alpha/Picture 8.png"
     }
@@ -358,9 +392,7 @@
   // DỮ LIỆU 12 UNIT 
   // ==========================================
   const audioData = {
-    1: [],
-    2: unit2Podcasts,
-    3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []
+    1: [], 2: unit2Podcasts, 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []
   };
 
   const menuScreen = document.getElementById('menu-screen');
@@ -369,9 +401,12 @@
   const audioPlayerArea = document.getElementById('audio-player-area');
   const currentUnitTitle = document.getElementById('current-unit-title');
   
-  // Khai báo các biến Lightbox
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightbox-img');
+  // Khai báo các biến của màn hình Now Playing
+  const nowPlayingOverlay = document.getElementById('now-playing-overlay');
+  const npCoverImg = document.getElementById('np-cover-img');
+  const npTitle = document.getElementById('np-title');
+  const npDesc = document.getElementById('np-desc');
+  const npAudioPlayer = document.getElementById('np-audio-player');
 
   function initMenu() {
     for (let i = 1; i <= 12; i++) {
@@ -396,33 +431,18 @@
     if (tracks.length === 0) {
       audioPlayerArea.innerHTML = `<div class="empty-state">Hồ sơ Unit ${unitNumber} đang được giải mật. Bạn quay lại sau nhé! 🕵️‍♂️</div>`;
     } else {
-      tracks.forEach(track => {
-        // Thêm thuộc tính onclick để mở Lightbox khi bấm vào ảnh
+      tracks.forEach((track, index) => {
+        // Mỗi dòng giờ là một nút bấm gọi hàm playPodcast()
         audioPlayerArea.innerHTML += `
-          <div class="audio-item">
-            <img src="${track.cover}" class="podcast-cover" title="Bấm để phóng to ảnh" onclick="openLightbox(this.src)" onerror="this.src='https://via.placeholder.com/300/7209b7/FFFFFF?text=INTERPOL'">
+          <div class="audio-item" onclick="playPodcast(${unitNumber}, ${index})">
+            <img src="${track.cover}" class="podcast-cover-mini" onerror="this.src='https://via.placeholder.com/150/7209b7/FFFFFF?text=IP'">
             <div class="audio-info">
               <h3>${track.title}</h3>
               <p>${track.desc}</p>
-              <audio controls preload="metadata">
-                <source src="${track.src}" type="audio/mpeg">
-                Trình duyệt của bạn không hỗ trợ thẻ audio.
-              </audio>
             </div>
+            <div class="play-icon">▶</div>
           </div>
         `;
-      });
-
-      // Tự động dừng bài cũ khi phát bài mới
-      const audios = document.querySelectorAll('audio');
-      audios.forEach(audio => {
-        audio.addEventListener('play', () => {
-          audios.forEach(otherAudio => {
-            if (otherAudio !== audio) {
-              otherAudio.pause();
-            }
-          });
-        });
       });
     }
 
@@ -432,39 +452,39 @@
   }
 
   function goBack() {
-    const audios = document.querySelectorAll('audio');
-    audios.forEach(audio => { audio.pause(); audio.currentTime = 0; });
-    
+    // Quay lại Menu thì tự động tắt nhạc
+    npAudioPlayer.pause();
     audioScreen.style.display = 'none';
     menuScreen.style.display = 'block';
   }
 
-  // --- CÁC HÀM XỬ LÝ LIGHTBOX ---
-  function openLightbox(src) {
-    if(src.includes("via.placeholder.com")) {
-      lightboxImg.src = 'https://via.placeholder.com/800/7209b7/FFFFFF?text=INTERPOL';
-    } else {
-      lightboxImg.src = src;
-    }
-    lightbox.style.display = "flex";
+  // --- CÁC HÀM XỬ LÝ NOW PLAYING ---
+  function playPodcast(unitNumber, trackIndex) {
+    const track = audioData[unitNumber][trackIndex];
+    
+    // Đẩy dữ liệu vào bảng điều khiển
+    npCoverImg.src = track.cover;
+    npTitle.innerText = track.title;
+    npDesc.innerText = track.desc;
+    npAudioPlayer.src = track.src;
+    
+    // Hiển thị màn hình lên và tự động phát nhạc
+    nowPlayingOverlay.style.display = 'flex';
+    npAudioPlayer.play();
   }
 
-  function closeLightbox() {
-    lightbox.style.display = "none";
-    lightboxImg.src = "";
+  function closeNowPlaying() {
+    // Tạm dừng nhạc và đóng bảng điều khiển
+    npAudioPlayer.pause();
+    nowPlayingOverlay.style.display = 'none';
   }
 
-  function closeLightboxOnBackground(event) {
-    if (event.target === lightbox) {
-      closeLightbox();
+  function closeOnBackground(event) {
+    // Chỉ đóng khi bấm ra ngoài phần viền đen
+    if (event.target === nowPlayingOverlay) {
+      closeNowPlaying();
     }
   }
-
-  window.addEventListener('keydown', function(event) {
-    if (event.key === "Escape" && lightbox.style.display === "flex") {
-      closeLightbox();
-    }
-  });
 
   // --- CÁC HÀM XỬ LÝ GIAO DIỆN ---
   function toggleDarkMode() {
