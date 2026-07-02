@@ -59,24 +59,44 @@
     letter-spacing: 0.5px;
   }
 
-  .theme-toggle {
+  /* --- CỤM NÚT ĐIỀU KHIỂN GÓC PHẢI --- */
+  .control-group {
     position: absolute;
     top: 25px;
     right: 30px;
+    display: flex;
+    gap: 10px;
+  }
+
+  .theme-toggle, .lang-toggle {
     background: var(--card-bg);
     border: 1px solid var(--card-border);
-    border-radius: 50%;
-    width: 45px;
+    color: var(--text-main);
     height: 45px;
-    font-size: 20px;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
     display: flex;
     justify-content: center;
     align-items: center;
-    color: var(--text-main);
+    font-weight: bold;
   }
-  .theme-toggle:hover { transform: scale(1.1); }
+
+  .theme-toggle {
+    border-radius: 50%;
+    width: 45px;
+    font-size: 20px;
+  }
+
+  .lang-toggle {
+    border-radius: 22px;
+    padding: 0 15px;
+    font-size: 14px;
+  }
+
+  .theme-toggle:hover, .lang-toggle:hover { 
+    transform: scale(1.08); 
+    background-color: var(--card-border);
+  }
 
   .unit-menu {
     display: grid;
@@ -152,7 +172,7 @@
     border-radius: 16px;
     border: 1px solid var(--card-border);
     transition: all 0.3s ease;
-    cursor: pointer; /* Biến thẻ thành nút bấm */
+    cursor: pointer;
   }
 
   .audio-item:hover {
@@ -280,7 +300,6 @@
     outline: none;
   }
 
-  /* Tùy chỉnh thanh phát nhạc */
   .np-audio::-webkit-media-controls-panel { background-color: var(--card-bg); }
   .np-audio::-webkit-media-controls-current-time-display,
   .np-audio::-webkit-media-controls-time-remaining-display { color: var(--text-main); }
@@ -304,16 +323,20 @@
 <body>
 
 <div class="app-container">
-  <button class="theme-toggle" id="theme-btn" onclick="toggleDarkMode()" title="Chuyển đổi Sáng/Tối">🌙</button>
+  <!-- Cụm nút điều khiển -->
+  <div class="control-group">
+    <button class="lang-toggle" id="lang-btn" onclick="toggleLanguage()" title="Dịch / Translate">Translate</button>
+    <button class="theme-toggle" id="theme-btn" onclick="toggleDarkMode()" title="Chuyển sang nền Tối">🌙</button>
+  </div>
 
   <div id="menu-screen">
-    <h1>🎧 Thư viện Podcast</h1>
+    <h1 id="main-title">🎧 Thư viện Podcast</h1>
     <div class="unit-menu" id="unit-menu"></div>
   </div>
 
   <div id="audio-screen" class="view-screen">
     <div class="toolbar">
-      <button class="back-btn" onclick="goBack()">⬅ Quay lại</button>
+      <button class="back-btn" id="back-btn" onclick="goBack()">⬅ Quay lại</button>
       <h2 class="unit-title" id="current-unit-title">Unit ...</h2>
     </div>
     <div id="audio-player-area" class="audio-list"></div>
@@ -335,62 +358,105 @@
 
 <script>
   // ==========================================
-  // KHU VỰC CẤU HÌNH DẪN NGUỒN TRỰC TIẾP UNIT 2
+  // HỆ THỐNG ĐA NGÔN NGỮ (I18N)
+  // ==========================================
+  let currentLang = 'vi'; // Mặc định là Tiếng Việt
+  let activeUnit = null;  // Đang xem Unit nào
+  let activeTrackIndex = null; // Đang nghe bài nào
+
+  const i18n = {
+    vi: {
+      mainTitle: "🎧 Thư viện Podcast",
+      backBtn: "⬅ Quay lại",
+      unitPrefix: "Podcast Unit ",
+      emptyState1: "Hồ sơ Unit ",
+      emptyState2: " đang được giải mật. Bạn quay lại sau nhé! 🕵️‍♂️",
+      themeLight: "Chuyển sang nền Sáng",
+      themeDark: "Chuyển sang nền Tối",
+      audioFallback: "Trình duyệt của bạn không hỗ trợ audio."
+    },
+    en: {
+      mainTitle: "🎧 Podcast Library",
+      backBtn: "⬅ Back",
+      unitPrefix: "Podcast Unit ",
+      emptyState1: "Unit ",
+      emptyState2: " files are classified. Please check back later! 🕵️‍♂️",
+      themeLight: "Switch to Light Mode",
+      themeDark: "Switch to Dark Mode",
+      audioFallback: "Your browser does not support audio."
+    }
+  };
+
+  // ==========================================
+  // KHU VỰC CẤU HÌNH DỮ LIỆU TÍCH HỢP NGÔN NGỮ
   // ==========================================
   const unit2Podcasts = [
     {
-      title: "1. How INTERPOL tracks stolen cars across borders",
-      desc: "Hồ sơ điều tra phần 1",
+      title_vi: "1. How INTERPOL tracks stolen cars across borders",
+      title_en: "1. How INTERPOL tracks stolen cars across borders",
+      desc_vi: "Hồ sơ điều tra phần 1",
+      desc_en: "Investigation File Part 1",
       src: "Unit2-Alpha/1. How INTERPOL tracks stolen cars across borders.m4a", 
       cover: "Unit2-Alpha/Picture 1.png"
     },
     {
-      title: "2. Mã Alpha-Zulu và nhận diện xe",
-      desc: "Hồ sơ điều tra phần 2",
+      title_vi: "2. Mã Alpha-Zulu và nhận diện xe",
+      title_en: "2. Alpha-Zulu code and vehicle identification",
+      desc_vi: "Hồ sơ điều tra phần 2",
+      desc_en: "Investigation File Part 2",
       src: "Unit2-Alpha/2. Mã Alpha-Zulu và nhận diện xe.m4a", 
       cover: "Unit2-Alpha/Picture 2.png"
     },
     {
-      title: "3. Tactical English for International Law Enforcement",
-      desc: "Hồ sơ điều tra phần 3",
+      title_vi: "3. Tactical English for International Law Enforcement",
+      title_en: "3. Tactical English for International Law Enforcement",
+      desc_vi: "Hồ sơ điều tra phần 3",
+      desc_en: "Investigation File Part 3",
       src: "Unit2-Alpha/3. Tactical English for International Law Enforcement.m4a", 
       cover: "Unit2-Alpha/Picture 3.png"
     },
     {
-      title: "4. Thế giới ngầm trộm xe và INTERPOL",
-      desc: "Hồ sơ điều tra phần 4",
+      title_vi: "4. Thế giới ngầm trộm xe và INTERPOL",
+      title_en: "4. The car theft underworld and INTERPOL",
+      desc_vi: "Hồ sơ điều tra phần 4",
+      desc_en: "Investigation File Part 4",
       src: "Unit2-Alpha/4. Thế giới ngầm trộm xe và INTERPOL.m4a", 
       cover: "Unit2-Alpha/Picture 4.png"
     },
     {
-      title: "5. How English grammar catches car thieves",
-      desc: "Hồ sơ điều tra phần 5",
+      title_vi: "5. How English grammar catches car thieves",
+      title_en: "5. How English grammar catches car thieves",
+      desc_vi: "Hồ sơ điều tra phần 5",
+      desc_en: "Investigation File Part 5",
       src: "Unit2-Alpha/5. How English grammar catches car thieves.m4a", 
       cover: "Unit2-Alpha/Picture 5.png"
     },
     {
-      title: "6. Tại sao Toyota bị trộm nhiều nhất",
-      desc: "Hồ sơ điều tra phần 6",
+      title_vi: "6. Tại sao Toyota bị trộm nhiều nhất",
+      title_en: "6. Why Toyotas are stolen the most",
+      desc_vi: "Hồ sơ điều tra phần 6",
+      desc_en: "Investigation File Part 6",
       src: "Unit2-Alpha/6. Tại sao Toyota bị trộm nhiều nhất.m4a", 
       cover: "Unit2-Alpha/Picture 6.png"
     },
     {
-      title: "7. How language stops high speed chases",
-      desc: "Hồ sơ điều tra phần 7",
+      title_vi: "7. How language stops high speed chases",
+      title_en: "7. How language stops high speed chases",
+      desc_vi: "Hồ sơ điều tra phần 7",
+      desc_en: "Investigation File Part 7",
       src: "Unit2-Alpha/7. How language stops high speed chases.m4a", 
       cover: "Unit2-Alpha/Picture 7.png"
     },
     {
-      title: "8. Vũ khí tiếng Anh của cảnh sát",
-      desc: "Hồ sơ điều tra phần 8",
+      title_vi: "8. Vũ khí tiếng Anh của cảnh sát",
+      title_en: "8. The English weapon of the police",
+      desc_vi: "Hồ sơ điều tra phần 8",
+      desc_en: "Investigation File Part 8",
       src: "Unit2-Alpha/8. Vũ khí tiếng Anh của cảnh sát.m4a", 
       cover: "Unit2-Alpha/Picture 8.png"
     }
   ];
 
-  // ==========================================
-  // DỮ LIỆU 12 UNIT 
-  // ==========================================
   const audioData = {
     1: [], 2: unit2Podcasts, 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [], 10: [], 11: [], 12: []
   };
@@ -401,14 +467,16 @@
   const audioPlayerArea = document.getElementById('audio-player-area');
   const currentUnitTitle = document.getElementById('current-unit-title');
   
-  // Khai báo các biến của màn hình Now Playing
+  // Các biến màn hình Now Playing
   const nowPlayingOverlay = document.getElementById('now-playing-overlay');
   const npCoverImg = document.getElementById('np-cover-img');
   const npTitle = document.getElementById('np-title');
   const npDesc = document.getElementById('np-desc');
   const npAudioPlayer = document.getElementById('np-audio-player');
 
+  // --- HÀM KHỞI TẠO MENU ---
   function initMenu() {
+    unitMenuContainer.innerHTML = '';
     for (let i = 1; i <= 12; i++) {
       const btn = document.createElement('button');
       btn.className = 'unit-btn';
@@ -423,22 +491,27 @@
     }
   }
 
+  // --- MỞ UNIT VÀ HIỂN THỊ DANH SÁCH BÀI ---
   function openUnit(unitNumber) {
-    currentUnitTitle.innerText = `Podcast Unit ${unitNumber}`;
+    activeUnit = unitNumber;
+    currentUnitTitle.innerText = i18n[currentLang].unitPrefix + unitNumber;
     audioPlayerArea.innerHTML = '';
     const tracks = audioData[unitNumber] || [];
 
     if (tracks.length === 0) {
-      audioPlayerArea.innerHTML = `<div class="empty-state">Hồ sơ Unit ${unitNumber} đang được giải mật. Bạn quay lại sau nhé! 🕵️‍♂️</div>`;
+      audioPlayerArea.innerHTML = `<div class="empty-state">${i18n[currentLang].emptyState1}${unitNumber}${i18n[currentLang].emptyState2}</div>`;
     } else {
       tracks.forEach((track, index) => {
-        // Mỗi dòng giờ là một nút bấm gọi hàm playPodcast()
+        // Lấy nội dung theo ngôn ngữ hiện tại
+        const displayTitle = currentLang === 'vi' ? track.title_vi : track.title_en;
+        const displayDesc = currentLang === 'vi' ? track.desc_vi : track.desc_en;
+        
         audioPlayerArea.innerHTML += `
           <div class="audio-item" onclick="playPodcast(${unitNumber}, ${index})">
             <img src="${track.cover}" class="podcast-cover-mini" onerror="this.src='https://via.placeholder.com/150/7209b7/FFFFFF?text=IP'">
             <div class="audio-info">
-              <h3>${track.title}</h3>
-              <p>${track.desc}</p>
+              <h3>${displayTitle}</h3>
+              <p>${displayDesc}</p>
             </div>
             <div class="play-icon">▶</div>
           </div>
@@ -452,7 +525,7 @@
   }
 
   function goBack() {
-    // Quay lại Menu thì tự động tắt nhạc
+    activeUnit = null;
     npAudioPlayer.pause();
     audioScreen.style.display = 'none';
     menuScreen.style.display = 'block';
@@ -460,45 +533,77 @@
 
   // --- CÁC HÀM XỬ LÝ NOW PLAYING ---
   function playPodcast(unitNumber, trackIndex) {
+    activeTrackIndex = trackIndex;
     const track = audioData[unitNumber][trackIndex];
     
-    // Đẩy dữ liệu vào bảng điều khiển
     npCoverImg.src = track.cover;
-    npTitle.innerText = track.title;
-    npDesc.innerText = track.desc;
+    npTitle.innerText = currentLang === 'vi' ? track.title_vi : track.title_en;
+    npDesc.innerText = currentLang === 'vi' ? track.desc_vi : track.desc_en;
     npAudioPlayer.src = track.src;
     
-    // Hiển thị màn hình lên và tự động phát nhạc
     nowPlayingOverlay.style.display = 'flex';
     npAudioPlayer.play();
   }
 
   function closeNowPlaying() {
-    // Tạm dừng nhạc và đóng bảng điều khiển
+    activeTrackIndex = null;
     npAudioPlayer.pause();
     nowPlayingOverlay.style.display = 'none';
   }
 
   function closeOnBackground(event) {
-    // Chỉ đóng khi bấm ra ngoài phần viền đen
     if (event.target === nowPlayingOverlay) {
       closeNowPlaying();
     }
   }
 
-  // --- CÁC HÀM XỬ LÝ GIAO DIỆN ---
+  // --- ĐỔI GIAO DIỆN SÁNG / TỐI ---
   function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     const themeBtn = document.getElementById('theme-btn');
     if (document.body.classList.contains('dark-mode')) {
       themeBtn.innerText = '☀️';
-      themeBtn.title = 'Chuyển sang nền Sáng';
+      themeBtn.title = i18n[currentLang].themeLight;
     } else {
       themeBtn.innerText = '🌙';
-      themeBtn.title = 'Chuyển sang nền Tối';
+      themeBtn.title = i18n[currentLang].themeDark;
     }
   }
 
+  // --- ĐỔI NGÔN NGỮ (VI <-> EN) ---
+  function toggleLanguage() {
+    currentLang = currentLang === 'vi' ? 'en' : 'vi';
+    
+    // Đổi hiển thị text trên nút: Giao diện đang là VI thì nút hiện "Translate" (để đổi sang EN) và ngược lại
+    const langBtn = document.getElementById('lang-btn');
+    langBtn.innerText = currentLang === 'vi' ? 'Translate' : 'Dịch';
+    
+    // Cập nhật text giao diện chung
+    document.getElementById('main-title').innerText = i18n[currentLang].mainTitle;
+    document.getElementById('back-btn').innerText = i18n[currentLang].backBtn;
+    npAudioPlayer.innerHTML = i18n[currentLang].audioFallback;
+
+    // Cập nhật title nút Theme
+    const isDark = document.body.classList.contains('dark-mode');
+    const themeBtn = document.getElementById('theme-btn');
+    if (themeBtn) {
+      themeBtn.title = isDark ? i18n[currentLang].themeLight : i18n[currentLang].themeDark;
+    }
+
+    // Nếu đang xem Unit cụ thể, hãy render lại danh sách bài
+    if (activeUnit !== null) {
+      openUnit(activeUnit);
+    }
+
+    // Nếu đang mở bảng phát nhạc (Now Playing), cập nhật lại Text
+    if (activeTrackIndex !== null && activeUnit !== null) {
+      const currentTrack = audioData[activeUnit][activeTrackIndex];
+      npTitle.innerText = currentLang === 'vi' ? currentTrack.title_vi : currentTrack.title_en;
+      npDesc.innerText = currentLang === 'vi' ? currentTrack.desc_vi : currentTrack.desc_en;
+    }
+  }
+
+  // Khởi động
   initMenu();
 </script>
 
